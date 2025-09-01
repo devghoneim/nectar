@@ -38,6 +38,7 @@ class AuthService
         if ($data['code'] == $otp->code) {
 
             $user->is_phone_verified = 1;
+            $user->save();
             $token = $user->createTokenUser();
             $otp->delete();
             return ['user' => $user, 'token' => $token];
@@ -49,21 +50,24 @@ class AuthService
     public function login($r)
     {
 
-        if (!Auth::attempt(['phone'=>$r->phone ,'password'=>$r->password ])) {
+        if (!Auth::attempt(['phone' => $r['phone'], 'password' => $r['password']])) {
             throw ValidationException::withMessages([
-                'phone' => [__('auth.fail')]
+                'phone' => [__('auth.fail')],
             ]);
+
         }
 
-        $user = Auth::user()->is_phone_verified;
-        if (!$user) {
-         
-        throw ValidationException::withMessages([
+
+        if (!Auth::user()->is_phone_verified) {
+
+            throw ValidationException::withMessages([
                 'verify' => [__('messages.fail')]
             ]);
-
         }
-        $user->createTokenUser();
+
+        $user = Auth::user();
+        $token = $user->createTokenUser();
+        return ['user'=>$user,'token'=>$token];
 
 
 
@@ -79,7 +83,7 @@ class AuthService
             }
             $otp = Otp::getOtp($user->phone);
             if ($otp->expires_at >= now()) {
-                throw ValidationException::withMessages([__('messages.wait').' '.now()->diffInSeconds($otp->expires_at).' '.__('messages.second')]);
+                throw ValidationException::withMessages([__('messages.wait') . ' ' . now()->diffInSeconds($otp->expires_at) . ' ' . __('messages.second')]);
             }
             OtpRequested::dispatch($user->id, $user->phone, 'phone');
         } catch (\Throwable $th) {

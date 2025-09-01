@@ -48,8 +48,8 @@ class AuthController extends Controller
     public function login(LoginRequest $r)
     {
         
-        $this->authService->login($r->validated());
-     return $this->success(__('messages.successfully_register_please_verify'));    
+      $user =   $this->authService->login($r->validated());
+     return $this->success(__('messages.successfully_register_please_verify'),$user,200);    
 
     }
 

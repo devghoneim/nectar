@@ -13,12 +13,14 @@ Route::post('/login',[AuthController::class,'login']);
 Route::post('/logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
 Route::post('/rest-password',[AuthController::class,'restPassword']);
 
-
-Route::middleware('set.local')->group(function(){
-
-    Route::get('/user', function (Request $request) {
+ Route::get('/user', function (Request $request) {
         return $request->user();
     })->middleware('auth:sanctum');
+Route::middleware('set.local')->group(function(){
+
+    // Route::get('/user', function (Request $request) {
+    //     return $request->user();
+    // })->middleware('auth:sanctum');
 
 });
 

@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Events\OtpRequested;
 use App\Listeners\GenerateOtp;
 use App\Models\Otp;
+use App\Models\User;
 use App\Repository\Interface\UserRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthService
@@ -24,23 +26,13 @@ class AuthService
     public function verify($data)
     {
 
-        $user = $this->repo->checkPhone($data['phone']);
+        $user = $this->isCorrectCode($data);
 
-        if (!$user) {
-            throw ValidationException::withMessages(['phone' => __('messages.incorrect_phone')]);
-        }
-
-        $otp = Otp::getOtp($data['phone']);
-        if (!$otp) {
-            throw ValidationException::withMessages(['otp' => __('messages.expired')]);
-        }
-
-        if ($data['code'] == $otp->code) {
-
+        if ($user) {
             $user->is_phone_verified = 1;
             $user->save();
             $token = $user->createTokenUser();
-            $otp->delete();
+            $user->otp->delete();
             return ['user' => $user, 'token' => $token];
         } else {
             return throw ValidationException::withMessages([__('messages.fail')]);
@@ -74,6 +66,20 @@ class AuthService
 
     }
 
+    public function restPassword($data)
+    {
+        try {
+            
+            $user = $this->isCorrectCode($data);
+            $user->password = Hash::make($data['password']);
+            $user->save();
+            $user->otp->delete();
+          $token = $user->createTokenUser();
+            return ['user'=>$user , 'token'=>$token];
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
     public function sendCode($data)
     {
         try {
@@ -82,8 +88,8 @@ class AuthService
                 throw ValidationException::withMessages(['phone' => __('messages.incorrect_phone')]);
             }
             $otp = Otp::getOtp($user->phone);
-            if ($otp->expires_at >= now()) {
-                throw ValidationException::withMessages([__('messages.wait') . ' ' . now()->diffInSeconds($otp->expires_at) . ' ' . __('messages.second')]);
+            if ($otp) {
+                throw ValidationException::withMessages([__('messages.wait') . ' ' . now()->diffInSecond($otp->expires_at) . ' ' . __('messages.second')]);
             }
             OtpRequested::dispatch($user->id, $user->phone, 'phone');
         } catch (\Throwable $th) {
@@ -91,9 +97,38 @@ class AuthService
         }
     }
 
+
+
+
+
     public function logout($r)
     {
 
         $r->user()->currentAccessToken()->delete();
+    }
+
+
+    public function isCorrectCode($data)
+    {
+
+        $user = $this->repo->checkPhone($data['phone']);
+
+        if (!$user) {
+             throw ValidationException::withMessages(['phone' => __('messages.incorrect_phone')]);
+        }
+
+        $otp = Otp::getOtp($data['phone']);
+
+        if (!$otp) {
+             throw ValidationException::withMessages(['otp' => __('messages.expired')]);
+        }
+
+        if ($user->otp->code != $data['code']) {
+             throw ValidationException::withMessages(['otp' => __('messages.fail')]);
+        }
+
+        return $user;
+
+
     }
 }

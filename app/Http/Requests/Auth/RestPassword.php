@@ -4,7 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SendCodeRequest extends FormRequest
+class RestPassword extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,9 @@ class SendCodeRequest extends FormRequest
     public function rules(): array
     {
         return [
-                        'phone' => ['required','string','regex:/^((\+|00|)9665|0?5)([013-9][0-9]{7})$/','exists:users,phone'],
+            'phone' => ['required','string','regex:/^((\+|00|)9665|0?5)([013-9][0-9]{7})$/'],
+            'code'=>['required','string'],
+            'password'=>'required|min:8|max:150|confirmed'
 
         ];
     }

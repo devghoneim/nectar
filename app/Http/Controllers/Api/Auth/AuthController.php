@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\RestPassword;
 use App\Http\Requests\Auth\SendCodeRequest;
 use App\Http\Requests\Auth\VerifyRequest;
 use App\Http\Traits\Response;
@@ -37,6 +38,16 @@ class AuthController extends Controller
         $data =  $this->authService->verify($r->validated());
         return $this->success(__('messages.verified'),$data['user'],201,[$data['token']]);
     }
+
+
+    public function restPassword(RestPassword $r)
+    {
+         return $this->authService->restPassword($r->validated());
+
+
+    }
+
+
 
     public function sendCode(SendCodeRequest $r)
     {

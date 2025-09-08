@@ -14,7 +14,7 @@ trait Response
     public function success($message = 'Success',$data = null, $status = 200, $meta = [])
     {
          $payload = [
-        'success' => true,
+        'status' => true,
         'message' => $message,
         'data'    => $data,
     ];
@@ -34,7 +34,7 @@ trait Response
     public function fail( $message = 'Error',  $status = 400,$meta = [])
     {
               $payload = [
-        'success' => false,
+        'status' => false,
         'message' => $message
     ];
 

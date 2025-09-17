@@ -2,26 +2,26 @@
 
 namespace App\Models;
 
-use App\Models\Zone;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Location extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'zone',
-        'area'
-    ];
+    protected $fillable = ['user_id','zone_id','area_id'];
 
-    public function user()
+    public function zone()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Zone::class,'zone_id');
     }
 
-    public function zones()
-{
-    return $this->belongsTo(Zone::class);
 
-}
+    public function area()
+    {
+        return $this->belongsTo(Area::class,'area_id');
+    }
+
+     public function user()
+    {
+        return $this->belongsTo(User::class,'user_id');
+    }
+
 }

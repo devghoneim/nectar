@@ -9,8 +9,11 @@ class SubCategory extends Model
 {
         use Translatable;
 
-    protected $fillable = ['category_id', 'image'];
+    protected $fillable = ['category_id'];
     public $translatedAttributes = ['name'];
+   
+   
+   
     public function category()
     {
         return $this->belongsTo(Category::class);

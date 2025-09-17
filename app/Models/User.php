@@ -55,14 +55,17 @@ class User extends Authenticatable
         return $this->hasOne(Otp::class);
     }
 
-     public function locations()
-    {
-        return $this->hasMany(Location::class);
-    }
-
     public function createTokenUser()
     {
         $device = substr(request()->userAgent()??'',0,255);
        return $this->createToken($device)->plainTextToken;
     }
+
+    public function locations()
+    {
+        return $this->hasMany(Location::class,'user_id');
+    }
+
+
+    
 }

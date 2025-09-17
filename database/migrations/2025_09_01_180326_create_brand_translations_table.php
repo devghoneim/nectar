@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreignId('brand_id')->constrained()->cascadeOnDelete();
             $table->string('locale');
             $table->string('name');
-            $table->text('description')->nullable();
-            $table->timestamps();
         });
     }
 

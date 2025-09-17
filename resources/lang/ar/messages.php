@@ -9,4 +9,5 @@ return [
     'logout'=>'تم تسجيل الخروج',
     'wait'=>'انتظر',
     'second'=>'ثانيه',
+    'deleted_successfuly'=>'تم المسح بنجاح',
 ];

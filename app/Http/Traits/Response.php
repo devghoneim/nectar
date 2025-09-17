@@ -11,7 +11,7 @@ trait Response
 
 
 
-    public function success($message = 'Success',$data = null, $status = 200, $meta = [])
+    public function success($message = 'Success', $data = null, $status = 200, $meta = [])
     {
          $payload = [
         'status' => true,

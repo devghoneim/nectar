@@ -14,6 +14,8 @@ class BrandRequest extends FormRequest
         return true;
     }
 
+    
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,9 +26,6 @@ class BrandRequest extends FormRequest
         return [
             'name.en'=>['required','string'],
             'name.ar'=>['required','string'],
-            'description.ar'=>['required','string'],
-            'description.en'=>['required','string'],
-            'image'=>['required','image','mimes:jpg,jpeg,png,webp', 'max:2048']
         ];
     }
 }

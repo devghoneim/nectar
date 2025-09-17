@@ -3,14 +3,25 @@
 namespace App\Models;
 
 use App\Models\Location;
+use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
 
 class Zone extends Model
 {
-    protected $fillable = ['name'];
+    use Translatable;
+    public $translatedAttributes = ['name'];
 
-    public function locations()
+
+    public function areas()
     {
-        return $this->hasMany(Location::class);
+        return $this->hasMany(Area::class,'zone_id');
     }
+
+
+    
+
+
+
+    
+
 }

@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
-            $table->foreignId('sub_category_id')->constrained('sub_categories')->cascadeOnDelete();
+            $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories')->nullOnDelete();
             $table->foreignId('brand_id')->constrained('brands')->cascadeOnDelete();
             $table->decimal('price', 10, 2);
-            $table->decimal('offer', 10, 2);
-            $table->unsignedBigInteger('quantitly');
+            $table->unsignedTinyInteger('offer')->nullable();
+            $table->unsignedInteger('unit_value');
+            $table->string('unit_type',10);
+            $table->unsignedInteger('quantity');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

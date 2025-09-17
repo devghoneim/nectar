@@ -4,11 +4,23 @@ namespace App\Models;
 
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Category extends Model
+class Category extends Model implements HasMedia
 {
-    use Translatable;
+    use Translatable , InteractsWithMedia;
 
-    protected $fillable = ['image'];
     public $translatedAttributes = ['name'];
+
+
+
+    public function subCategories()
+    {
+        return $this->hasMany(SubCategory::class);
+    }
+        public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

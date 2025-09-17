@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Brand extends Model implements HasMedia
+class Brand extends Model 
 {
-    use Translatable , InteractsWithMedia;
+    use Translatable;
 
-    public $translatedAttributes = ['name','description'];
+    public $translatedAttributes = ['name'];
+    
     
 }

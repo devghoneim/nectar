@@ -9,6 +9,8 @@ return [
     'logout'=>'logout is successfully',
     'wait'=>'wait',
     'second'=>'secoud',
+    'deleted_successfuly'=>'Delete Successfuly',
+
 
 
 

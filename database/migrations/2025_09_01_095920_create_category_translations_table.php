@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
              $table->string('locale');
              $table->string('name');
-            $table->timestamps();
         });
     }
 

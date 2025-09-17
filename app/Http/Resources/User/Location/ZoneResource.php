@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\User\Location;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BrandResource extends JsonResource
+class ZoneResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,11 +14,9 @@ class BrandResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return  [
-            'name' => $this->name,
-            'descrition'=>$this->description,
-            'image' => $this->getFirstMediaUrl('logo'),
-
+        return [
+            'id'=>$this->id,
+            'name'=>$this->name,
         ];
     }
 }

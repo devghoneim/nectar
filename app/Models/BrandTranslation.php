@@ -6,5 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BrandTranslation extends Model
 {
-     protected $fillable = ['name', 'description'];
+     protected $fillable = ['name'];
+    public $timestamps = false;
+
 }

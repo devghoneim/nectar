@@ -55,12 +55,5 @@ class ZoneService
         Zone::findORFail($id)->delete();
     }
 
-    public function areaByZone($r)
-    {
-        $validated = $r->validate([
-            'area_id'=>['required','integer','exists:areas,id']
-        ]);
-
-        return Zone::where('area_id',$validated['area_id'])->get();
-    }
+  
 }

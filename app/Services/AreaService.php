@@ -46,4 +46,9 @@ class AreaService
 
     Area::findOrFail($id)->delete();
   }
+
+    public function getAreaByZoneId($id)
+    {
+      return Area::where('zone_id',$id)->get();
+    }
 }

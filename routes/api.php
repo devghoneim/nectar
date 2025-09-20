@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\Admin\AreaController;
 use App\Http\Controllers\Api\Admin\ZoneController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\User\LocationController;
@@ -12,25 +11,30 @@ use Illuminate\Support\Facades\Route;
 
 
 
-//Auth
+Route::middleware('guest')->group(function(){
 Route::post('/register',[AuthController::class,'register']);
-Route::post('/verify',[AuthController::class,'verify']);
-Route::post('/send-code',[AuthController::class,'sendCode']);
 Route::post('/login',[AuthController::class,'login']);
-Route::post('/logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
+Route::post('/verify-phone',[AuthController::class,'verifyPhone']);
 Route::post('/rest-password',[AuthController::class,'restPassword']);
-//End Auth
+
+});
 
 
 
 Route::middleware(['set.locale','auth:sanctum'])->group(function(){
     
-        Route::get('/',[ZoneController::class,'index'])->prefix('zone');
-        Route::post('/',[ZoneController::class,'areaByZone'])->prefix('zone');
+        Route::post('/logout',[AuthController::class,'logout']);
+
+
+        Route::prefix('zone')->group(function(){
+            Route::get('/',[ZoneController::class,'index']);
+            Route::post('/',[ZoneController::class,'areaByZoneId']);
+
+        });
 
 
 
-    Route::get('/',[HomeController::class,'index']);
+    Route::get('/',[HomeController::class,'index'])->name('home');
     Route::get('/{id}',[HomeController::class,'product'])->where('id','[0-9]+');
     Route::get('/{name}',[HomeController::class,'search'])->where('name','[\p{Arabic}a-zA-Z\- ]+');   
     Route::post('/',[HomeController::class,'productBySearch']);   
@@ -57,7 +61,10 @@ Route::middleware(['set.locale','auth:sanctum'])->group(function(){
     });
 
 
-
+//Otp
+Route::post('/verify-code',[AuthController::class,'isValide']);
+Route::post('/send-code',[AuthController::class,'sendCode']);
+//End Otp
 
 
 

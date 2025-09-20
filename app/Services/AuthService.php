@@ -15,18 +15,45 @@ class AuthService
 {
 
 
-    public function __construct(private UserRepositoryInterface $repo) {}
+    public function __construct(private UserService $userService) {}
 
+
+        public function login($r)
+    {
+        if (!Auth::attempt(['phone' => $r['phone'], 'password' => $r['password']])) {
+            throw ValidationException::withMessages([
+                'fail' => 'SomeThing Not Correct',
+            ]);
+
+        }
+        if (!Auth::user()->is_phone_verified) {
+
+            throw ValidationException::withMessages([
+                'verify' => [__('messages.fail')]
+            ]);
+        }
+
+        $user = Auth::user();
+        $token = $user->createTokenUser();
+        return ['user'=>$user,'token'=>$token];
+    }
 
     public function register($data)
     {
-        $this->repo->create($data);
-    }
+        try {
+        $user = $this->userService->create($data);
+        OtpRequested::dispatch($user->id,$user->phone,'phone');
+        return ['phone'=>$user->phone];
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    
+        }
 
-    public function verify($data)
+    public function verifyPhone($data)
     {
 
-        $user = $this->isCorrectCode($data);
+        $user = $this->isValide($data);
 
         if ($user) {
             $user->is_phone_verified = 1;
@@ -39,38 +66,12 @@ class AuthService
         }
     }
 
-    public function login($r)
-    {
-
-        if (!Auth::attempt(['phone' => $r['phone'], 'password' => $r['password']])) {
-            throw ValidationException::withMessages([
-                'phone' => [__('auth.fail')],
-            ]);
-
-        }
-
-
-        if (!Auth::user()->is_phone_verified) {
-
-            throw ValidationException::withMessages([
-                'verify' => [__('messages.fail')]
-            ]);
-        }
-
-        $user = Auth::user();
-        $token = $user->createTokenUser();
-        return ['user'=>$user,'token'=>$token];
-
-
-
-
-    }
 
     public function restPassword($data)
     {
         try {
             
-            $user = $this->isCorrectCode($data);
+            $user = $this->isValide($data);
             $user->password = Hash::make($data['password']);
             $user->save();
             $user->otp->delete();
@@ -83,7 +84,7 @@ class AuthService
     public function sendCode($data)
     {
         try {
-            $user = $this->repo->checkPhone($data['phone']);
+            $user = $this->userService->findUserByPhone($data['phone']);
             if (!$user) {
                 throw ValidationException::withMessages(['phone' => __('messages.incorrect_phone')]);
             }
@@ -98,20 +99,18 @@ class AuthService
     }
 
 
-
-
-
     public function logout($r)
     {
 
         $r->user()->currentAccessToken()->delete();
     }
 
+    
 
-    public function isCorrectCode($data)
+    public function isValide($data)
     {
 
-        $user = $this->repo->checkPhone($data['phone']);
+        $user = $this->userService->findUserByPhone($data['phone']);
 
         if (!$user) {
              throw ValidationException::withMessages(['phone' => __('messages.incorrect_phone')]);

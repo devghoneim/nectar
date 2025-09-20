@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ZoneRequest;
+use App\Http\Requests\Public\GetAreaRequest;
 use App\Http\Traits\Response;
+use App\Services\AreaService;
 use App\Services\ZoneService;
 use GuzzleHttp\Psr7\Request;
 
 class ZoneController extends Controller
 {
      use Response;
-     public function __construct(private ZoneService $zs) {}
+     public function __construct(private ZoneService $zs , private AreaService $areaService) {}
 
      public function index()
      {
@@ -64,11 +66,11 @@ class ZoneController extends Controller
           }
      }
 
-     public function areaByZone(Request $r)
+     public function areaByZoneId(GetAreaRequest $r)
      {
           try {
 
-               return $this->success('Success', $this->zs->areaByZone($r));
+               return $this->success('Success', $this->areaService->getAreaByZoneId($r->validated()));
           } catch (\Exception $e) {
                return $this->fail($e->getMessage());
           }

@@ -20,23 +20,22 @@ class AuthController extends Controller
     {
         
     }
+
     
     public function register(RegisterRequest $r)
     {   
         try {
-            $this->authService->register($r->validated());
-            return $this->success(__('messages.successfully_register_please_verify'));    
+        return $this->success(__('messages.successfully_register_please_verify'),$this->authService->register($r->validated()));    
             
-        } catch (\Throwable $th) {
-            return $this->fail($th);
+        } catch (\Exception $e) {
+            return $this->fail();
         }     
     }
 
 
-    public function verify(VerifyRequest $r)
+    public function verifyPhone(VerifyRequest $r)
     {
-        $data =  $this->authService->verify($r->validated());
-        return $this->success(__('messages.verified'),$data['user'],201,[$data['token']]);
+        return $this->success(__('messages.verified'),$this->authService->verifyPhone($r->validated()));
     }
 
 
@@ -44,30 +43,38 @@ class AuthController extends Controller
     {
          return $this->authService->restPassword($r->validated());
 
-
     }
 
+    public function isValide(VerifyRequest $r) {
+        try {
+        return $this->success(__('messages.verified'),$this->authService->isValide($r->validated()));
+            
+        } catch (\Throwable $th) {
+            return $this->fail();
 
+        }
+    }
 
+   
     public function sendCode(SendCodeRequest $r)
     {
-        $this->authService->sendCode($r->validated());
-     return $this->success(__('messages.successfully_register_please_verify'));    
+        
+     return $this->success(__('messages.successfully_register_please_verify'),$this->authService->sendCode($r->validated()));    
 
     }
 
     public function login(LoginRequest $r)
     {
         
-      $user =   $this->authService->login($r->validated());
-     return $this->success(__('messages.successfully_register_please_verify'),$user,200);    
+      
+     return $this->success(__('messages.successfully_register_please_verify'),$this->authService->login($r->validated()));    
 
     }
 
     public function logout(Request $r)
     {
-         $this->authService->logout($r);
-         return $this->success(__('messages.logout'));
+         
+         return $this->success(__('messages.logout'),$this->authService->logout($r));
 
     }
 
